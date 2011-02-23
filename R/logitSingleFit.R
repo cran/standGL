@@ -17,8 +17,10 @@ function(y, X, index, lambda = 1, thresh = 0.0001, maxit = 1000, Us, Vs, oldFit,
   while(outerDiff > thresh && outerIter < maxit){
     ex <- exp(oldOuterFit)
     probs <- ex/(1+ex)
-    resp <- oldOuterFit + 4 * (y-nrow(y)*probs)/(probs*(1-probs))
-
+#    resp <- oldOuterFit + 4 * (y-nrow(y)*probs)/(probs*(1-probs))
+    resp <- oldOuterFit + 2 * (y-probs)
+    resid <- 1*(y - probs)
+    
     diff <- 1
     iter <- 1
     innerConverged <- 1
@@ -47,7 +49,12 @@ function(y, X, index, lambda = 1, thresh = 0.0001, maxit = 1000, Us, Vs, oldFit,
           resid <- resid + oldFit[,i]
           proj <- logitProj(Us[[i]], resid)
           normProj <- sqrt(sum((proj)^2))
-          shrinkage <-  max(c((1-sqrt(groupLen[i])*4*lambda*is.pen[i] / normProj),0))
+          if(normProj != 0){
+            shrinkage <-  max(c((1-sqrt(groupLen[i])*1*lambda*is.pen[i] / normProj),0)) ## 2 -> 4?
+          }
+          if(normProj == 0){
+            shrinkage <- 0
+          }
           newFit <- shrinkage * proj
           resid <- resid - newFit
           diff <- diff + sum(abs(oldFit[,i] - newFit))

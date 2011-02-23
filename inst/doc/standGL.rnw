@@ -36,14 +36,14 @@ include a new column of $1$s to our covariate matrix, and a new group
 to our index:
 
 <<>>=
-X <- cbind(X,rep(1,length(y)))
+X <- cbind(rep(1,length(y)), X)
 index <- c(0,index)
 @ 
 
 Now we must indicate that this new column is not to be penalized:
 
 <<>>=
-is.pen <- c(0,rep(1,ncol(X) - 1))
+is.pen <- c(0,rep(1,(length(unique(index)) - 1)))
 dim(X)
 length(y)
 length(is.pen)
@@ -113,7 +113,7 @@ cv.fit.ridge$lambda.min
 @ 
 \end{center}
 
-Based on the cv-curve we see that the model here fits the data slightly better than the
-vanilla standardized group lasso. If we desired we could also find the coefficients of our optimal model as before.
+Based on the cv-curve we see that the model here fits the data maybe slightly better than the
+vanilla standardized group lasso (though the error bars certainly overlap). If we desired we could also find the coefficients of our optimal model as before.
 
 \end{document}

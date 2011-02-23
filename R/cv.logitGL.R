@@ -8,16 +8,26 @@ function(y, X, index, lam.path = NULL, nlam = 100, thresh = 10^(-4), maxit=100, 
   nlam <- length(lam.path)
   lldiff <- matrix(0, ncol = nlam, nrow = nfold)
   
-  size <- ceiling(nrow(X)/nfold)
-  ind <- sample(1:nrow(X), rep = FALSE)
+  size.small <- floor(nrow(X)/nfold)
+  num.small <- (nrow(X)/nfold - floor(nrow(X)/nfold)) * nfold
+  if(num.small == 0){
+    num.small <- nfold
+  }
+
+
+  ind <- sample(1:nrow(X), replace = FALSE)
+  end <- 1
+  
   for(i in 1:nfold){
-    if(i < nfold){
-      ind.out <- ind[((i-1)*size+1):(i*size)]
-      ind.in <- ind[-(((i-1)*size+1):(i*size))]
+    if(i <= num.small){
+      ind.out <- ind[end:(end + size.small - 1)]
+      ind.in <- ind[-(end:(end + size.small - 1))]
+      end <- end + size.small
     }
-    if(i == nfold){
-      ind.out <- ind[((i-1)*size+1):nrow(X)]
-      ind.in <- ind[-(((i-1)*size+1):nrow(X))]
+    if(i > num.small){
+      ind.out <- ind[end:(end + size.small)]
+      ind.in <- ind[-(end:(end + size.small))]
+      end <- end + size.small + 1
     }
 
     newX <- X[ind.in,]

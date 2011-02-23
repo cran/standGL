@@ -8,7 +8,7 @@ Fits the standardized group lasso along the regularization path
 Gives the solution to the standardized/ridged group lasso for linear and logistic regression for a number of values along the regularization path.
 }
 \usage{
-standGL(y,X, index, family = "linear", alpha = 0.95, maxit = 1000, thresh = 10^(-3), nlam = 100, min.lam.frac = 0.05, is.pen = rep(1,length(index)), lam.path = NULL)
+standGL(y,X, index, family = "linear", alpha = 0.95, maxit = 1000, thresh = 10^(-3), nlam = 100, min.lam.frac = 0.05, is.pen = rep(1,length(unique(index))), lam.path = NULL)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -76,7 +76,7 @@ Maintainer: Noah Simon \email{nsimon@stanford.edu}
 \seealso{\code{cv.standGL}
 }
 \examples{
-n = 100; p = 300; size.groups = 5
+n = 30; p = 50; size.groups = 10
 index <- ceiling(1:p / size.groups)
 X = matrix(rnorm(n * p), ncol = p, nrow = n)
 beta = (-2:2)

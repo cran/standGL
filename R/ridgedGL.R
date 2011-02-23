@@ -2,7 +2,7 @@ ridgedGL <-
 function(y, X, index, lam.path = NULL, thresh = 10^(-4), maxit = 100, nlam = 100, min.lam.frac = 0.05, alpha = 0.5, is.pen = rep(1,length(index))){
 
   if(is.null(lam.path)){
-    lam.path <- ridgedcalcLam(y, X, index, nlam, min.lam.frac)
+    lam.path <- ridgedcalcLam(y, X, index, nlam, min.lam.frac, is.pen)
   }
 
   numGroups <- length(unique(index))

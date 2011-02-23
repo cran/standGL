@@ -1,13 +1,14 @@
 Package: standGL
 Type: Package
 Title: Standardized Group Lasso
-Version: 1.0
+Version: 1.1
 Date: 2011-02-23
 Author: Noah Simon
 Maintainer: Noah Simon <nsimon@stanford.edu>
-Description: This package fits the standardized (and ridged) group lasso for linear and logistic regression
+Description: This package fits the standardized (and ridged) group
+        lasso for linear and logistic regression
 License: GPL-2
 LazyLoad: yes
-Packaged: 2011-11-16 19:05:08 UTC; nsimon
+Packaged: 2012-06-08 21:34:26 UTC; nsimon
 Repository: CRAN
-Date/Publication: 2011-11-17 11:26:06
+Date/Publication: 2012-06-09 06:10:39
