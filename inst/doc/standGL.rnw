@@ -1,0 +1,119 @@
+\documentclass[a4paper]{article}
+\usepackage{graphicx}
+% \VignetteIndexEntry{Fitting the Standardized Group Lasso}
+
+
+\title{standGL: Standardized Group Lasso}
+\author{Noah Simon\\
+Rob Tibshirani}
+
+\begin{document}
+
+\maketitle
+\section{Introduction}
+We will give a short tutorial on using standGL. We will give the
+tutorial for linear regression, though it is just as straightforward
+to run for logistic regression.\\
+
+\section{Example}
+We first load our data and set up the response. In this case $X$ must
+be an $n$ by $p$ matrix of covariate values by observation ($n$ patients with $p$
+covariates) and $y$ is an $n$ length vector of responses. {\tt index}
+is a $p$ length vector of group memberships. For this example our data has $200$ covariate measurements (divided into $5$ groups of
+40) on $50$ observations
+
+<<>>=
+set.seed(10)
+library("standGL")
+load("VignetteExample.rdata")
+X <- data$covariates
+y <- data$response
+index <- data$groupMemberships
+@
+
+Say, we would also like to fit an intercept --- in that case we
+include a new column of $1$s to our covariate matrix, and a new group
+to our index:
+
+<<>>=
+X <- cbind(X,rep(1,length(y)))
+index <- c(0,index)
+@ 
+
+Now we must indicate that this new column is not to be penalized:
+
+<<>>=
+is.pen <- c(0,rep(1,ncol(X) - 1))
+dim(X)
+length(y)
+length(is.pen)
+@ 
+
+We then call our functions to fit with the standardized group lasso penalty,
+and cross validate. 
+<<>>=
+cv.fit <- cv.standGL(y,X,index, family="linear", is.pen = is.pen)
+fit <- standGL(y,X,index, family="linear", is.pen = is.pen)
+@
+
+Once fit, we can view the optimal $\lambda$ value and a cross
+validated error plot to help evaluate our
+model.
+
+\begin{center}
+\setkeys{Gin}{width = 2.5 in}
+<<fig=TRUE>>=
+plot(cv.fit)
+@
+<<>>=
+cv.fit$lambda.min
+@ 
+\end{center}
+
+In this case, we see that the minimum was achieved by a
+fairly regularized model. We can check which covariates our model
+chose to be active, and see the coefficients of those covariates.
+
+<<<>>=
+our.Model  <- which(cv.fit$lambdas == cv.fit$lambda.min)
+Active.Index <- which(fit$beta[,our.Model] != 0)
+Active.Coefficients <- fit$beta[Active.Index, our.Model]
+Active.Index
+@ 
+
+We see that there our optimal model chose coefficients $82$ to $121$ to be
+active (this corresponds to the third group) and fit an intercept term.\\
+
+Now, because group sizes are large compared to the number of observations, suppose that we are worried about overfitting within each
+group. In this case, we can add some slight ridge penalty within group:
+
+<<>>=
+cv.fit.ridge <- cv.standGL(y,X,index, family="ridge", is.pen = is.pen, alpha = 0.95)
+fit.ridge <- standGL(y,X,index, family= "ridge", is.pen = is.pen, alpha = 0.95)
+@
+
+We have no strong theoretical rationale for choosing 
+{\tt alpha}$=0.95$. We note that {\tt alpha}$ = 1$ corresponds to the
+standardized group lasso with no ridge penalty, and {\tt alpha}$=0$
+corresponds to ridge regression with no group penalty. Also, we have seen that,
+as in the elastic net, adding a slight amount of ridge regression
+helps keep our solution well behaved.\\
+
+Again, we can view the optimal $\lambda$ value and a cross
+validated error plot to help evaluate our
+model.
+
+\begin{center}
+\setkeys{Gin}{width = 2.5 in}
+<<fig=TRUE>>=
+plot(cv.fit.ridge)
+@
+<<>>=
+cv.fit.ridge$lambda.min
+@ 
+\end{center}
+
+Based on the cv-curve we see that the model here fits the data slightly better than the
+vanilla standardized group lasso. If we desired we could also find the coefficients of our optimal model as before.
+
+\end{document}

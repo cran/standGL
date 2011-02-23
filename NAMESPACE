@@ -1,0 +1,4 @@
+export(standGL, cv.standGL)
+
+
+S3method("plot","cv.standGL")
